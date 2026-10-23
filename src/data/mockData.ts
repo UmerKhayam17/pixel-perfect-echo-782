@@ -113,3 +113,54 @@ export const MOCK_ACTIVITY: ChartPoint[] = Array.from({ length: 14 }, (_, i) => 
 export const USER_TIMEZONE_NOTE = "Sample businesses are fictional; contact details are placeholders for UI demonstration only.";
 
 export { countryByName };
+
+export function generateLeads(opts: {
+  niche: string;
+  country: string;
+  city?: string | null;
+  keyword?: string | null;
+  count: number;
+  seed?: number;
+}): Lead[] {
+  const rand = mulberry32(opts.seed ?? 7919);
+  const country = countryByName(opts.country) ?? COUNTRIES[0];
+  const suffixes = SUFFIXES[opts.niche] ?? ["Group", "Services", "Studio", "Center", "Partners"];
+  const leads: Lead[] = [];
+  const seen = new Set<string>();
+  const cap = Math.min(opts.count, 150);
+
+  let i = 0;
+  while (leads.length < cap && i < cap * 20) {
+    i++;
+    const prefix = PREFIXES[Math.floor(rand() * PREFIXES.length)];
+    const suffix = suffixes[Math.floor(rand() * suffixes.length)];
+    const city = opts.city || country.cities[Math.floor(rand() * country.cities.length)];
+    const name = opts.keyword && rand() < 0.35 ? `${prefix} ${opts.keyword} ${suffix}` : `${prefix} ${suffix}`;
+    const key = `${name.toLowerCase()}|${city.toLowerCase()}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const domain = name.toLowerCase().replace(/[^a-z0-9]+/g, "").slice(0, 18) + ".example.com";
+    const wantWebsite = rand() < 0.78;
+    const phone = rand() < 0.82
+      ? `+${country.dial.replace("+", "")} ${20 + Math.floor(rand() * 79)} ${100 + Math.floor(rand() * 899)} ${1000 + Math.floor(rand() * 8999)}`
+      : null;
+    const email = wantWebsite && rand() < 0.85 ? `info@${domain}` : null;
+    const website = wantWebsite ? `https://www.${domain}` : null;
+
+    leads.push({
+      id: `gen-${opts.seed ?? 0}-${leads.length + 1}`,
+      businessName: name,
+      category: opts.niche,
+      country: country.name,
+      city,
+      phone,
+      email,
+      website,
+      source: SOURCES[Math.floor(rand() * SOURCES.length)],
+      dateAdded: new Date().toISOString(),
+      address: `${10 + Math.floor(rand() * 990)} ${STREET_NAMES[Math.floor(rand() * STREET_NAMES.length)]}, ${city}`,
+    });
+  }
+  return leads;
+}
