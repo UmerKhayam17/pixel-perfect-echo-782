@@ -1,0 +1,5 @@
+# Keep text files with LF line endings in the repo and on every machine (Prettier expects LF).
+* text=auto eol=lf
+*.png binary
+*.ico binary
+*.xlsx binary
