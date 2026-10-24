@@ -386,13 +386,13 @@ function UsersPage() {
   );
 }
 
-/** Shows a temporary password once, with a copy button, after it has been set. */
+/** Shows the new password once, with a copy button, after it has been set. */
 function TempPasswordNotice({ email, password }: { email: string; password: string }) {
   return (
     <div className="space-y-2 rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
       <p>
-        Share these sign-in details privately (not by public chat). They'll choose their own
-        password when they first sign in.
+        Share these sign-in details privately (not by public chat). This is their password; they
+        can't change it themselves, but you can reset it here any time.
       </p>
       <div className="flex items-center gap-2 rounded-md bg-card px-3 py-2 font-mono text-xs">
         <span className="flex-1 break-all">
@@ -402,9 +402,7 @@ function TempPasswordNotice({ email, password }: { email: string; password: stri
           variant="ghost"
           size="icon"
           className="h-7 w-7"
-          onClick={() =>
-            copyText(`Email: ${email}\nTemporary password: ${password}`, "Sign-in details")
-          }
+          onClick={() => copyText(`Email: ${email}\nPassword: ${password}`, "Sign-in details")}
           aria-label="Copy"
         >
           <Copy className="h-3.5 w-3.5" />
@@ -465,7 +463,7 @@ function AddUserDialog({
           <DialogDescription>
             {created
               ? "Copy their sign-in details now — the password isn't shown again."
-              : "They'll sign in with a temporary password and set their own."}
+              : "Choose their password. They sign in with it; only an admin can change it."}
           </DialogDescription>
         </DialogHeader>
         {created ? (
@@ -515,7 +513,7 @@ function AddUserDialog({
               <p className="text-xs text-muted-foreground">{ROLE_INFO[role]}</p>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="new-password">Temporary password</Label>
+              <Label htmlFor="new-password">Password</Label>
               <div className="flex gap-2">
                 <Input
                   id="new-password"
@@ -586,7 +584,7 @@ function ResetPasswordDialog({ user, onClose }: { user: User | null; onClose: ()
         <DialogHeader>
           <DialogTitle className="font-display">Reset {user?.name}'s password</DialogTitle>
           <DialogDescription>
-            They'll be signed out everywhere and must choose a new password at next sign-in.
+            They'll be signed out everywhere and sign in again with the new password.
           </DialogDescription>
         </DialogHeader>
         {done && user ? (
@@ -597,7 +595,7 @@ function ResetPasswordDialog({ user, onClose }: { user: User | null; onClose: ()
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="font-mono"
-              aria-label="Temporary password"
+              aria-label="New password"
             />
             <Button type="button" variant="outline" onClick={() => setPassword(tempPassword())}>
               New

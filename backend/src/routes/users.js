@@ -64,7 +64,8 @@ usersRouter.post("/", async (req, res) => {
   if (problem) errors.password = problem;
   if (Object.keys(errors).length) return res.status(400).json({ error: "Please fix the highlighted fields.", errors });
 
-  const user = await User.create({ name, email, role, passwordHash: await hashPassword(password), mustChangePassword: true });
+  // The password the admin sets is the one they keep (members can't change their own).
+  const user = await User.create({ name, email, role, passwordHash: await hashPassword(password), mustChangePassword: false });
   res.status(201).json(user);
 });
 
@@ -113,7 +114,7 @@ usersRouter.put("/:id", async (req, res) => {
   res.json(user);
 });
 
-// Sets a temporary password; the user must change it at next sign-in. Signs them out everywhere.
+// Sets a new password for a teammate (the one they'll use from now on). Signs them out everywhere.
 usersRouter.post("/:id/password", async (req, res) => {
   const user = await User.findById(req.params.id);
   if (!user) return res.status(404).json({ error: "User not found" });
@@ -121,7 +122,7 @@ usersRouter.post("/:id/password", async (req, res) => {
   const problem = passwordProblem(password, user);
   if (problem) return res.status(400).json({ error: problem, errors: { password: problem } });
   user.passwordHash = await hashPassword(password);
-  user.mustChangePassword = String(user._id) !== String(req.user._id);
+  user.mustChangePassword = false;
   user.passwordChangedAt = new Date();
   await user.save();
   await Session.deleteMany({ userId: user._id, _id: { $ne: req.session._id } });

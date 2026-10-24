@@ -20,6 +20,9 @@ export async function bootstrapAdmin() {
   }
   if (!EMAIL_RE.test(email)) return console.error("ADMIN_EMAIL in .env is not a valid email address — admin not created.");
 
+  // Staff no longer choose their own password, so nobody should be stuck on that screen.
+  await User.updateMany({ role: { $ne: "admin" }, mustChangePassword: true }, { $set: { mustChangePassword: false } });
+
   const existing = await User.findOne({ email });
   if (existing) {
     if (password) console.warn(`Admin ${email} exists. You can now remove ADMIN_PASSWORD from backend/.env.`);

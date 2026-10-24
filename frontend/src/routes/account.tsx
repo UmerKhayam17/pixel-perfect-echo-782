@@ -34,7 +34,8 @@ function AccountPage() {
         </p>
       </div>
       <ProfileCard />
-      <PasswordCard />
+      {/* Staff keep the password their admin gave them; only admins change their own here. */}
+      {user.role === "admin" ? <PasswordCard /> : <ManagedPasswordCard />}
       <SessionsCard />
     </div>
   );
@@ -133,6 +134,22 @@ function ProfileCard() {
           </Button>
         </form>
       </CardContent>
+    </Card>
+  );
+}
+
+function ManagedPasswordCard() {
+  return (
+    <Card className="card-shadow rounded-xl">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 font-display text-base font-semibold">
+          <KeyRound className="h-4 w-4" /> Password
+        </CardTitle>
+        <CardDescription>
+          Your password is set by your workspace admin. If you need a new one, or think someone else
+          knows it, ask your admin to reset it.
+        </CardDescription>
+      </CardHeader>
     </Card>
   );
 }

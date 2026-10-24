@@ -93,6 +93,11 @@ authRouter.put("/me", requireAuth, async (req, res) => {
 
 authRouter.post("/password", async (req, res) => {
   const user = req.user;
+  // Staff use the password their admin gave them; only an admin can change it (Team page).
+  // Admins created from .env still choose their own on first sign-in.
+  if (user.role !== "admin") {
+    return res.status(403).json({ error: "Your password is managed by your admin. Ask them to change it.", code: "forbidden" });
+  }
   const current = String(req.body?.currentPassword ?? "");
   const next = String(req.body?.newPassword ?? "");
   if (!(await verifyPassword(current, user.passwordHash))) {
