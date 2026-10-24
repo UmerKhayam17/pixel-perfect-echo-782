@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "scraper:setup": "cd scraper && python -m venv .venv && .venv\\Scripts\\python -m pip install -r requirements.txt && .venv\\Scripts\\python -m playwright install chromium",
+    "scraper:setup": "node scripts/setup-scraper.js",
     "admin": "node scripts/admin.js",
     "create-admin": "node scripts/admin.js create",
     "restore": "node scripts/restore.js",
