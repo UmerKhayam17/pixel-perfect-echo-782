@@ -1,0 +1,6 @@
+node_modules/
+.env
+scraper/.venv/
+__pycache__/
+.app-secret
+backups/

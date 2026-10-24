@@ -1,0 +1,25 @@
+{
+  "name": "leadfinder-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/server.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "scraper:setup": "cd scraper && python -m venv .venv && .venv\\Scripts\\python -m pip install -r requirements.txt && .venv\\Scripts\\python -m playwright install chromium",
+    "admin": "node scripts/admin.js",
+    "create-admin": "node scripts/admin.js create",
+    "restore": "node scripts/restore.js",
+    "backup": "node scripts/backup.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0",
+    "imapflow": "^1.7.8",
+    "mailparser": "^3.12.4",
+    "mongoose": "^8.9.0",
+    "nodemailer": "^6.10.1"
+  }
+}
